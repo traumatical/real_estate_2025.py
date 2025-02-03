@@ -76,37 +76,67 @@ data = fetch_all_data()
 if data:
     df = pd.DataFrame(data)
     # 필요한 컬럼만 선택
-    df_display = df[["articleNo", "articleName", "tradeTypeName", "buildingName", "floorInfo",
-                     "dealOrWarrantPrc", "areaName", "direction", "articleConfirmYmd", "articleFeatureDesc",
+    df_display = df[["articleConfirmYmd", "articleNo", "articleName", "tradeTypeName", "buildingName", "floorInfo",
+                     "dealOrWarrantPrc", "areaName", "direction", "articleFeatureDesc",
                      "sameAddrMaxPrc", "sameAddrMinPrc", "realtorName", "tagList"]]
     
     # "buildingName", "floorInfo", "dealOrWarrantPrc" 3개 컬럼이 동일한 행은 중복 제거
     df_display = df_display.drop_duplicates(subset=["buildingName", "floorInfo", "dealOrWarrantPrc"])
-
+    
+    # 매물날짜 기준 내림차순 정렬 (최신 날짜가 가장 위)
+    df_display = df_display.sort_values(by="articleConfirmYmd", ascending=False)
+    
     # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가하며, 인라인 스타일 적용 (한 줄, 폰트 크기 13px)
     df_display["매물보기"] = df_display["articleNo"].apply(
         lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank" style="white-space: nowrap; font-size: 13px;">매물보기</a>'
     )
     
-    # 정렬 컨트롤 (매물보기 열은 정렬 대상에서 제외)
-    sort_cols = list(df_display.columns.drop("매물보기"))
-    sort_by = st.selectbox("정렬 기준 선택", sort_cols)
-    sort_order = st.radio("정렬 순서", ("오름차순", "내림차순"))
-    ascending = True if sort_order == "오름차순" else False
-    df_display = df_display.sort_values(by=sort_by, ascending=ascending)
+    # 컬럼명 한글로 변경
+    rename_dict = {
+        "articleConfirmYmd": "매물날짜",
+        "articleNo": "매물번호",
+        "articleName": "아파트명",
+        "tradeTypeName": "거래분류",
+        "buildingName": "동수",
+        "floorInfo": "층수",
+        "dealOrWarrantPrc": "매매가격",
+        "areaName": "평수",
+        "direction": "방향",
+        "articleFeatureDesc": "특징",
+        "sameAddrMaxPrc": "매매변동가격(max)",
+        "sameAddrMinPrc": "매매변동가격(min)",
+        "realtorName": "중개소",
+        "tagList": "태그"
+    }
+    df_display = df_display.rename(columns=rename_dict)
+    
+    # 정렬 컨트롤: "동수", "층수", "매매가격" 중 하나를 선택할 수 있도록 함 (매물날짜는 고정)
+    sort_option = st.selectbox("추가 정렬 기준 선택 (매물날짜는 최신순 고정)",
+                               options=["없음", "동수", "층수", "매매가격"])
+    if sort_option != "없음":
+        sort_order = st.radio("정렬 순서", options=["오름차순", "내림차순"])
+        ascending = True if sort_order == "오름차순" else False
+        df_display = df_display.sort_values(by=sort_option, ascending=ascending)
     
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
-    # 테이블의 배경을 검은색, 글씨를 흰색으로, 셀 패딩과 글씨 크기를 조정하는 CSS 스타일 추가
+    # CSS 스타일: 글씨체 굴림체, 배경 검은색, 글씨 흰색, 셀 패딩 2px, 글씨 크기 12px, 헤더 중앙정렬, 테이블 너비 100%
     table_style = """
     <style>
+        table {
+            width: 100%;
+        }
         table, th, td {
+            font-family: '굴림체', Gulim, sans-serif;
             font-size: 12px;
             padding: 2px;
             background-color: white;
             color: black;
             border: 1px solid black;
+        }
+        th {
+            text-align: center;
         }
         a {
             color: #00bfff;
@@ -118,3 +148,4 @@ if data:
     components.html(table_style + html_table, height=800, scrolling=True)
 else:
     st.write("No data available.")
+
