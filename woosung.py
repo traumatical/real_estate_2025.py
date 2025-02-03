@@ -112,7 +112,7 @@ if data:
     
     # 정렬 컨트롤: "동수", "층수", "매매가격" 중 하나를 선택할 수 있도록 함 (매물날짜는 고정)
     sort_option = st.selectbox("추가 정렬 기준 선택 (매물날짜는 최신순 고정)",
-                               options=["없음", "동수", "층수", "매매가격"])
+                               options=["매물날짜", "동수", "층수", "매매가격"])
     if sort_option != "매물날짜":
         sort_order = st.radio("정렬 순서", options=["오름차순", "내림차순"])
         ascending = True if sort_order == "오름차순" else False
