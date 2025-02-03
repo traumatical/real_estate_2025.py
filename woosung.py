@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+import streamlit.components.v1 as components
 
 # Streamlit page setup
 st.set_page_config(page_title="상록우성 320,322,325동 아파트 매물", layout="wide")
@@ -57,7 +58,6 @@ def fetch_all_data():
         try:
             url = f'https://new.land.naver.com/api/articles/complex/2645?realEstateType=PRE%3AAPT&tradeType=A1&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page={page}&complexNo=2645&buildingNos=663947%3A1400508%3A1086427%3A866578&areaNos=2&type=list&order=rank'
             response = requests.get(url, cookies=cookies, headers=headers)
-
             if response.status_code == 200:
                 data = response.json()
                 articles = data.get("articleList", [])
@@ -95,10 +95,20 @@ if data:
     ascending = True if sort_order == "오름차순" else False
     df_display = df_display.sort_values(by=sort_by, ascending=ascending)
     
-    # HTML 테이블 생성 (escape=False로 HTML 태그 유지)
+    # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
-    st.write("### Real Estate Listings - Pages 1 to 10")
-    st.markdown(html_table, unsafe_allow_html=True)
+    # 테이블의 열간격(패딩)과 글씨 크기를 조정하는 CSS 스타일 추가 (글씨 크기를 1포인트 줄임)
+    table_style = """
+    <style>
+        table, th, td {
+            font-size: 12px;
+            padding: 2px;
+        }
+    </style>
+    """
+    
+    # st.components.v1.html()를 사용하여 HTML 테이블을 렌더링 (높이와 스크롤 설정)
+    components.html(table_style + html_table, height=800, scrolling=True)
 else:
     st.write("No data available.")
