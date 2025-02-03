@@ -86,7 +86,7 @@ if data:
     # 매물날짜 기준 내림차순 정렬 (최신 날짜가 가장 위)
     df_display = df_display.sort_values(by="articleConfirmYmd", ascending=False)
     
-    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가하며, 인라인 스타일 적용 (한 줄, 폰트 크기 13px)
+    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가 (인라인 스타일: 한 줄, 폰트 크기 13px)
     df_display["매물보기"] = df_display["articleNo"].apply(
         lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank" style="white-space: nowrap; font-size: 13px;">매물보기</a>'
     )
@@ -110,18 +110,11 @@ if data:
     }
     df_display = df_display.rename(columns=rename_dict)
     
-    # 정렬 컨트롤: "동수", "층수", "매매가격" 중 하나를 선택할 수 있도록 함 (매물날짜는 고정)
-    sort_option = st.selectbox("추가 정렬 기준 선택 (매물날짜는 최신순 고정)",
-                               options=["매물날짜", "동수", "층수", "매매가격"])
-    if sort_option != "매물날짜":
-        sort_order = st.radio("정렬 순서", options=["오름차순", "내림차순"])
-        ascending = True if sort_order == "오름차순" else False
-        df_display = df_display.sort_values(by=sort_option, ascending=ascending)
-    
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
     # CSS 스타일: 글씨체 굴림체, 배경 검은색, 글씨 흰색, 셀 패딩 2px, 글씨 크기 12px, 헤더 중앙정렬, 테이블 너비 100%
+    # 그리고 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째) 열은 굵게 처리
     table_style = """
     <style>
         table {
@@ -138,6 +131,11 @@ if data:
         th {
             text-align: center;
         }
+        /* 해당 열들의 헤더와 셀을 굵게 표시 (1, 5, 6, 7번째 열) */
+        th:nth-child(1), th:nth-child(5), th:nth-child(6), th:nth-child(7),
+        td:nth-child(1), td:nth-child(5), td:nth-child(6), td:nth-child(7) {
+            font-weight: bold;
+        }
         a {
             color: #00bfff;
             text-decoration: none;
@@ -148,4 +146,3 @@ if data:
     components.html(table_style + html_table, height=800, scrolling=True)
 else:
     st.write("No data available.")
-
