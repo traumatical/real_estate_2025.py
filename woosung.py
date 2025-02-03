@@ -83,10 +83,17 @@ if data:
     # "buildingName", "floorInfo", "dealOrWarrantPrc" 3개 컬럼이 동일한 행은 중복 제거
     df_display = df_display.drop_duplicates(subset=["buildingName", "floorInfo", "dealOrWarrantPrc"])
 
-    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가
+    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가하며, 인라인 스타일 적용 (한 줄, 폰트 크기 13px)
     df_display["매물보기"] = df_display["articleNo"].apply(
-        lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank">매물보기</a>'
+        lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank" style="white-space: nowrap; font-size: 13px;">매물보기</a>'
     )
+    
+    # 정렬 컨트롤 (매물보기 열은 정렬 대상에서 제외)
+    sort_cols = list(df_display.columns.drop("매물보기"))
+    sort_by = st.selectbox("정렬 기준 선택", sort_cols)
+    sort_order = st.radio("정렬 순서", ("오름차순", "내림차순"))
+    ascending = True if sort_order == "오름차순" else False
+    df_display = df_display.sort_values(by=sort_by, ascending=ascending)
     
     # HTML 테이블 생성 (escape=False로 HTML 태그 유지)
     html_table = df_display.to_html(escape=False, index=False)
