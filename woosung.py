@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # Streamlit page setup
-st.set_page_config(page_title="상록우성 320,322,325동 아파트 매물", layout="wide")
+st.set_page_config(page_title="상록우성 320,322,325동 아파트 매물", layout="narrow")
 st.title("상록우성 320,322,325동 아파트 매물")
 st.markdown("This page fetches and displays real estate listings from pages 1 to 10 using the Naver Real Estate API.")
 
