@@ -98,17 +98,23 @@ if data:
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
-    # 테이블의 열간격(패딩)과 글씨 크기를 조정하는 CSS 스타일 추가 (글씨 크기를 1포인트 줄임)
+    # 테이블의 배경을 검은색, 글씨를 흰색으로, 셀 패딩과 글씨 크기를 조정하는 CSS 스타일 추가
     table_style = """
     <style>
         table, th, td {
             font-size: 12px;
             padding: 2px;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+        }
+        a {
+            color: #00bfff;
+            text-decoration: none;
         }
     </style>
     """
     
-    # st.components.v1.html()를 사용하여 HTML 테이블을 렌더링 (높이와 스크롤 설정)
     components.html(table_style + html_table, height=800, scrolling=True)
 else:
     st.write("No data available.")
