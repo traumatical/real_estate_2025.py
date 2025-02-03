@@ -55,11 +55,9 @@ def fetch_all_data():
     all_articles = []
     for page in range(1, 11):
         try:
-            # 페이지 번호(page)를 URL에 적용할 수 있도록 수정하거나, 필요에 맞게 변경
             url = f'https://new.land.naver.com/api/articles/complex/2645?realEstateType=PRE%3AAPT&tradeType=A1&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page={page}&complexNo=2645&buildingNos=663947%3A1400508%3A1086427%3A866578&areaNos=2&type=list&order=rank'
             response = requests.get(url, cookies=cookies, headers=headers)
 
-            # Verify response is valid JSON
             if response.status_code == 200:
                 data = response.json()
                 articles = data.get("articleList", [])
@@ -70,13 +68,11 @@ def fetch_all_data():
             st.error(f"An error occurred: {e}")
         except ValueError:
             st.error(f"Non-JSON response for page {page}.")
-
     return all_articles
 
 # Fetch data for all pages
 data = fetch_all_data()
 
-# Transform data into a DataFrame if data is available
 if data:
     df = pd.DataFrame(data)
     # 필요한 컬럼만 선택
@@ -87,8 +83,15 @@ if data:
     # "buildingName", "floorInfo", "dealOrWarrantPrc" 3개 컬럼이 동일한 행은 중복 제거
     df_display = df_display.drop_duplicates(subset=["buildingName", "floorInfo", "dealOrWarrantPrc"])
 
-    # Display the table in Streamlit with a clean, readable layout
+    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가
+    df_display["매물보기"] = df_display["articleNo"].apply(
+        lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank">매물보기</a>'
+    )
+    
+    # HTML 테이블 생성 (escape=False로 HTML 태그 유지)
+    html_table = df_display.to_html(escape=False, index=False)
+    
     st.write("### Real Estate Listings - Pages 1 to 10")
-    st.dataframe(df_display)
+    st.markdown(html_table, unsafe_allow_html=True)
 else:
     st.write("No data available.")
