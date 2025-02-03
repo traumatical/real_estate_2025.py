@@ -50,7 +50,6 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
 }
 
-# Function to get data from the API for pages 1 to 10
 @st.cache_data
 def fetch_all_data():
     all_articles = []
@@ -70,7 +69,6 @@ def fetch_all_data():
             st.error(f"Non-JSON response for page {page}.")
     return all_articles
 
-# Fetch data for all pages
 data = fetch_all_data()
 
 if data:
@@ -80,13 +78,13 @@ if data:
                      "dealOrWarrantPrc", "areaName", "direction", "articleFeatureDesc",
                      "sameAddrMaxPrc", "sameAddrMinPrc", "realtorName", "tagList"]]
     
-    # "buildingName", "floorInfo", "dealOrWarrantPrc" 3개 컬럼이 동일한 행은 중복 제거
+    # 중복 제거: "buildingName", "floorInfo", "dealOrWarrantPrc" 동일한 행 제거
     df_display = df_display.drop_duplicates(subset=["buildingName", "floorInfo", "dealOrWarrantPrc"])
     
-    # 매물날짜 기준 내림차순 정렬 (최신 날짜가 가장 위)
+    # 기본 정렬: 매물날짜 기준 내림차순 (최신 날짜가 가장 위)
     df_display = df_display.sort_values(by="articleConfirmYmd", ascending=False)
     
-    # "매물보기" 링크 생성: articleNo를 URL 파라미터에 추가 (인라인 스타일: 한 줄, 폰트 크기 13px)
+    # "매물보기" 링크 생성 (인라인 스타일: 한 줄, 폰트 크기 13px)
     df_display["매물보기"] = df_display["articleNo"].apply(
         lambda x: f'<a href="https://new.land.naver.com/complexes/2645?ms=37.364204,127.112097,17&a=PRE:APT&b=A1&e=RETAIL&h=66&i=132&articleNo={x}" target="_blank" style="white-space: nowrap; font-size: 13px;">매물보기</a>'
     )
@@ -113,8 +111,9 @@ if data:
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
-    # CSS 스타일: 글씨체 굴림체, 배경 검은색, 글씨 흰색, 셀 패딩 2px, 글씨 크기 12px, 헤더 중앙정렬, 테이블 너비 100%
-    # 그리고 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째) 열은 굵게 처리
+    # CSS 스타일: 굴림체, 검은 배경, 흰 글씨, 셀 패딩 2px, 글씨 크기 12px, 헤더 중앙정렬, 테이블 너비 100%
+    # 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째)는 굵게 처리
+    # 모든 셀에 white-space: nowrap; 적용하여 내용이 줄바꿈되지 않고 좌우 스크롤됨
     table_style = """
     <style>
         table {
@@ -122,16 +121,17 @@ if data:
         }
         table, th, td {
             font-family: '굴림체', Gulim, sans-serif;
-            font-size: 12px;
+            font-size: 13px;
             padding: 2px;
             background-color: white;
             color: black;
             border: 1px solid black;
+            white-space: nowrap;
         }
         th {
             text-align: center;
         }
-        /* 해당 열들의 헤더와 셀을 굵게 표시 (1, 5, 6, 7번째 열) */
+        /* 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째) 열 굵게 처리 */
         th:nth-child(1), th:nth-child(5), th:nth-child(6), th:nth-child(7),
         td:nth-child(1), td:nth-child(5), td:nth-child(6), td:nth-child(7) {
             font-weight: bold;
