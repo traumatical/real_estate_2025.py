@@ -108,12 +108,17 @@ if data:
     }
     df_display = df_display.rename(columns=rename_dict)
     
+    # 불필요한 컬럼 삭제: 매물번호, 아파트명, 거래분류
+    df_display = df_display.drop(columns=["매물번호", "아파트명", "거래분류"])
+    
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
     
-    # CSS 스타일: 굴림체, 검은 배경, 흰 글씨, 셀 패딩 2px, 글씨 크기 12px, 헤더 중앙정렬, 테이블 너비 100%
-    # 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째)는 굵게 처리
-    # 모든 셀에 white-space: nowrap; 적용하여 내용이 줄바꿈되지 않고 좌우 스크롤됨
+    # CSS 스타일:
+    # - 전체 테이블 너비 100%
+    # - 굴림체, 글씨 크기는 기본 13px (데이터 셀)로, 헤더는 13pt로 설정
+    # - 배경은 검은색, 글씨는 흰색, 셀 패딩 2px, 모든 셀에 white-space: nowrap; 적용
+    # - 매물날짜(1번째), 동수(3번째), 층수(4번째), 매매가격(5번째) 열은 굵게 처리
     table_style = """
     <style>
         table {
@@ -123,17 +128,18 @@ if data:
             font-family: '굴림체', Gulim, sans-serif;
             font-size: 13px;
             padding: 2px;
-            background-color: white;
-            color: black;
-            border: 1px solid black;
+            background-color: black;
+            color: white;
+            border: 1px solid white;
             white-space: nowrap;
         }
         th {
             text-align: center;
+            font-size: 13pt;
         }
-        /* 매물날짜(1번째), 동수(5번째), 층수(6번째), 매매가격(7번째) 열 굵게 처리 */
-        th:nth-child(1), th:nth-child(5), th:nth-child(6), th:nth-child(7),
-        td:nth-child(1), td:nth-child(5), td:nth-child(6), td:nth-child(7) {
+        /* 헤더 및 셀에서 매물날짜(1번째), 동수(3번째), 층수(4번째), 매매가격(5번째) 열 굵게 처리 */
+        th:nth-child(1), th:nth-child(3), th:nth-child(4), th:nth-child(5),
+        td:nth-child(1), td:nth-child(3), td:nth-child(4), td:nth-child(5) {
             font-weight: bold;
         }
         a {
