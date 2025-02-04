@@ -109,7 +109,7 @@ if data:
     df_display = df_display.rename(columns=rename_dict)
     
     # 불필요한 컬럼 삭제: 매물번호, 아파트명, 거래분류
-    df_display = df_display.drop(columns=["매물번호", "아파트명", "거래분류"])
+    df_display = df_display.drop(columns=["매물번호", "아파트명", "거래분류", "평수"])
     
     # DataFrame을 HTML 테이블로 변환
     html_table = df_display.to_html(escape=False, index=False)
