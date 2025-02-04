@@ -5,7 +5,6 @@ import streamlit.components.v1 as components
 
 # Streamlit page setup
 st.set_page_config(page_title="매물", layout="wide")
-st.title("매물")
 st.markdown("This page fetches and displays real estate listings from pages 1 to 10 using the Naver Real Estate API.")
 
 # Define the cookies and headers as provided
