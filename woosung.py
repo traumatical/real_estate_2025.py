@@ -3,15 +3,6 @@ import requests
 import pandas as pd
 import streamlit.components.v1 as components
 
-# 제목 글씨 크기를 12pt로 조정하는 CSS 추가
-st.markdown("""
-    <style>
-        h1 {
-            font-size: 12pt !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
 # Streamlit page setup
 st.set_page_config(page_title="매물", layout="wide")
 st.title("매물")
