@@ -135,7 +135,7 @@ if data:
         }
         th {
             text-align: center;
-            font-size: 13pt;
+            font-size: 10pt;
         }
         /* 헤더 및 셀에서 매물날짜(1번째), 동수(3번째), 층수(4번째), 매매가격(5번째) 열 굵게 처리 */
         th:nth-child(1), th:nth-child(3), th:nth-child(4), th:nth-child(5),
