@@ -128,9 +128,9 @@ if data:
             font-family: '굴림체', Gulim, sans-serif;
             font-size: 13px;
             padding: 2px;
-            background-color: black;
-            color: white;
-            border: 1px solid white;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
             white-space: nowrap;
         }
         th {
