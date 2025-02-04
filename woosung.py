@@ -51,7 +51,7 @@ def fetch_all_data():
     all_articles = []
     for page in range(1, 11):
         try:
-            url = f'https://new.land.naver.com/api/articles/complex/2645?realEstateType=PRE%3AAPT&tradeType=A1&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page=2&complexNo=2645&buildingNos=663947%3A573536%3A1086427%3A1400508%3A493897%3A578619&areaNos=2&type=list&order=rank'
+            url = f'https://new.land.naver.com/api/articles/complex/2645?realEstateType=PRE%3AAPT&tradeType=A1&tag=%3A%3A%3A%3A%3A%3A%3A%3A&rentPriceMin=0&rentPriceMax=900000000&priceMin=0&priceMax=900000000&areaMin=0&areaMax=900000000&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&showArticle=false&sameAddressGroup=false&minMaintenanceCost&maxMaintenanceCost&priceType=RETAIL&directions=&page={page}&complexNo=2645&buildingNos=663947%3A573536%3A1086427%3A1400508%3A493897%3A578619&areaNos=2&type=list&order=rank'
             response = requests.get(url, cookies=cookies, headers=headers)
             if response.status_code == 200:
                 data = response.json()
